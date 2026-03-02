@@ -1,0 +1,9 @@
+{
+  "shards": [
+    "ac-zbidzek-shard-00-02.si4cxmq.mongodb.net",
+    "ac-zbidzek-shard-00-00.si4cxmq.mongodb.net",
+    "ac-zbidzek-shard-00-01.si4cxmq.mongodb.net"
+  ],
+  "replicaSet": "atlas-vavqfp-shard-0",
+  "rawTxt": "authSource=admin&replicaSet=atlas-vavqfp-shard-0"
+}

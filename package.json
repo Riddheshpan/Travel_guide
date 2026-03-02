@@ -1,0 +1,12 @@
+{
+  "name": "travel-guide",
+  "version": "1.0.0",
+  "scripts": {
+    "server": "cd backend && npm start",
+    "client": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
