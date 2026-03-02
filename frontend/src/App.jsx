@@ -4,6 +4,7 @@ import LoginSignup from './pages/Login'
 import HomePage from './pages/HomePage'
 import Dashboard from './pages/Dashboard'
 import Chat from './pages/Chat'
+import TravelAIPage from './pages/AI_page'
 import Navbar from './components/Navbar'
 import './pages/Pages_css/App.css'
 
@@ -30,6 +31,7 @@ const Layout = () => {
         <Route path="/login" element={<LoginSignup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/ai" element={<TravelAIPage />} />
       </Routes>
     </>
   );

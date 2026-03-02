@@ -20,13 +20,42 @@ const Dashboard = () => {
         localStorage.setItem('isAuthenticated', 'true');
     }, []);
 
-    // User State
+    // User State — avatar is stored per-user under avatar_<userId> to avoid cross-user bleed
     const [userProfile, setUserProfile] = useState({
         name: localStorage.getItem('loggedInUser') || "Traveler",
         handle: "@traveler",
         bio: "Exploring the world one adventure at a time.",
-        avatar: localStorage.getItem('avatar') || accountIcon  // persist across refreshes
+        avatar: localStorage.getItem(`avatar_${localStorage.getItem('userId')}`) || accountIcon
     });
+
+    // Fetch real profile from backend on mount so each user sees their own data
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+                const res = await axios.get('/api/user/me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.data.success) {
+                    const { fName, lName, avatar } = res.data.user;
+                    const name = `${fName} ${lName}`;
+                    const userId = localStorage.getItem('userId');
+                    // Update localStorage with current user's real data
+                    localStorage.setItem('loggedInUser', name);
+                    if (avatar) localStorage.setItem(`avatar_${userId}`, avatar);
+                    setUserProfile(prev => ({
+                        ...prev,
+                        name,
+                        avatar: avatar || prev.avatar
+                    }));
+                }
+            } catch (err) {
+                console.error('Failed to fetch profile:', err.message);
+            }
+        };
+        fetchProfile();
+    }, []);
 
     // ─── User's real posts from backend ────────────────────────────────────────
     const [myRecentPosts, setMyRecentPosts] = useState([]);
@@ -91,8 +120,9 @@ const Dashboard = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            // Persist avatar URL so it survives page refreshes
-            localStorage.setItem('avatar', res.data.avatar);
+            // Persist avatar URL under a per-user key so it never bleeds to other users
+            const userId = localStorage.getItem('userId');
+            localStorage.setItem(`avatar_${userId}`, res.data.avatar);
             setUserProfile(prev => ({ ...prev, avatar: res.data.avatar }));
         } catch (err) {
             const errData = err.response?.data;
@@ -250,7 +280,7 @@ const Dashboard = () => {
                                         <div className="progress-bar"></div>
                                     </div>
                                 </div>
-                                <button className="access-ai-btn" onClick={() => navigate('/chat')}>
+                                <button className="access-ai-btn" onClick={() => navigate('/ai')}>
                                     Access Dedicated AI Page
                                 </button>
                             </div>

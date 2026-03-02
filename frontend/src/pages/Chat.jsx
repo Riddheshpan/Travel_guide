@@ -7,7 +7,8 @@ import accountIcon from '../assets/Icons/account.png';
 import pictureIcon from '../assets/Icons/insert-picture-icon.png';
 import logo from '../assets/Logo.png';
 import globeIcon from '../assets/Icons/globe.png';
-import bellIcon from '../assets/Icons/bell.png';
+import aiIcon from '../assets/Icons/artificial-intelligence.png';
+import DotGrid from './Style/dot';
 
 const Chat = () => {
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Chat = () => {
     const isValidObjectId = rawId && /^[a-f\d]{24}$/i.test(rawId);
     const currentUserId = isValidObjectId ? rawId : null;
     const currentUserName = localStorage.getItem('loggedInUser') || 'You';
-    const currentUserAvatar = localStorage.getItem('avatar') || accountIcon;
+    const currentUserAvatar = localStorage.getItem(`avatar_${rawId}`) || accountIcon;
 
     // ─── 1. Fetch posts ───────────────────────────────────────────────────────
     useEffect(() => {
@@ -189,6 +190,19 @@ const Chat = () => {
 
     return (
         <div className="chat-layout">
+            {/* Subtle dot animation in background */}
+            <DotGrid
+                dotSize={2}
+                gap={26}
+                baseColor="#1a1a1a"
+                activeColor="#555555"
+                proximity={120}
+                shockRadius={180}
+                shockStrength={2.5}
+                resistance={900}
+                returnDuration={1.2}
+                style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
+            />
 
             {/* ─── MODAL ─────────────────────────────────────────────────── */}
             {selectedPost && (
@@ -296,12 +310,15 @@ const Chat = () => {
                 <nav className="dock-nav">
                     <button className="dock-item active" title="Explore">
                         <img src={globeIcon} alt="Explore" className="dock-icon-img" />
+                        <span className="dock-label">Explore</span>
                     </button>
-                    <button className="dock-item" title="Notifications">
-                        <img src={bellIcon} alt="Notifications" className="dock-icon-img" />
+                    <button className="dock-item" title="AI Assistant" onClick={() => navigate('/dashboard')}>
+                        <img src={aiIcon} alt="AI" className="dock-icon-img" />
+                        <span className="dock-label">AI</span>
                     </button>
                     <button className="dock-item" onClick={() => navigate('/dashboard')} title="Profile">
                         <img src={accountIcon} alt="Profile" className="dock-icon-img" />
+                        <span className="dock-label">Profile</span>
                     </button>
                 </nav>
                 <div className="dock-action">
