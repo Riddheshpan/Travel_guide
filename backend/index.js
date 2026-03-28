@@ -8,6 +8,9 @@ require('./modules/db');
 const authRoute = require('./route/authRoute');
 const postRoute = require('./route/postRoute'); // ✅ Added
 const userRoute = require('./route/userRoute'); // ✅ Added
+const weatherRoute = require('./route/weatherRoute');
+const aiRoute = require('./route/aiRoute');
+const itineraryRoute = require('./route/itineraryRoute');
 
 const PORT = process.env.PORT || 8080;
 
@@ -17,6 +20,9 @@ app.use(cors());
 app.use('/auth', authRoute);
 app.use('/api/posts', postRoute); // ✅ Registered post route
 app.use('/api/user', userRoute); // ✅ Registered user route
+app.use('/api/weather', weatherRoute);
+app.use('/api/ai', aiRoute);
+app.use('/api/itinerary', itineraryRoute);
 
 app.get('/ping', (req, res) => {
     res.send("Pong");

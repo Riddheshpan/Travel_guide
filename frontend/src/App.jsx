@@ -1,10 +1,11 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import FrontPage from './pages/home'
 import LoginSignup from './pages/Login'
 import HomePage from './pages/HomePage'
 import Dashboard from './pages/Dashboard'
 import Chat from './pages/Chat'
 import TravelAIPage from './pages/AI_page'
+import WeatherPage from './pages/weather'
 import Navbar from './components/Navbar'
 import './pages/Pages_css/App.css'
 
@@ -20,18 +21,20 @@ const Layout = () => {
   const location = useLocation();
   const hideNavbarPaths = ['/', '/chat', '/login', '/signup'];
   const showNavbar = !hideNavbarPaths.includes(location.pathname);
+  const isLoggedIn = !!localStorage.getItem('userId');
 
   return (
     <>
       {showNavbar && <Navbar />}
       <Routes>
-        <Route path="/" element={<FrontPage />} />
+        <Route path="/" element={isLoggedIn ? <Navigate to="/chat" replace /> : <FrontPage />} />
         <Route path="/homePage" element={<HomePage />} />
-        <Route path="/signup" element={<LoginSignup />} />
-        <Route path="/login" element={<LoginSignup />} />
+        <Route path="/signup" element={isLoggedIn ? <Navigate to="/chat" replace /> : <LoginSignup />} />
+        <Route path="/login" element={isLoggedIn ? <Navigate to="/chat" replace /> : <LoginSignup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/ai" element={<TravelAIPage />} />
+        <Route path="/weather" element={<WeatherPage />} />
       </Routes>
     </>
   );

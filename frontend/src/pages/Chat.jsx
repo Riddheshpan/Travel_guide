@@ -182,11 +182,14 @@ const Chat = () => {
             (typeof id === 'object' ? id._id?.toString() : id?.toString()) === currentUserId
         );
 
-    const filteredPosts = posts.filter(post =>
-        post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (post.location && post.location.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        getAuthorName(post).toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredPosts = posts.filter(post => {
+        if (!searchQuery) return true;
+        const q = searchQuery.toLowerCase();
+        const contentMatch = post.content ? post.content.toLowerCase().includes(q) : false;
+        const locMatch = post.location ? post.location.toLowerCase().includes(q) : false;
+        const authorMatch = getAuthorName(post).toLowerCase().includes(q);
+        return contentMatch || locMatch || authorMatch;
+    });
 
     return (
         <div className="chat-layout">

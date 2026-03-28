@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import jsPDF from 'jspdf';
 import './Pages_css/Dashboard.css';
 import { useNavigate } from 'react-router-dom';
 import dashboardIcon from '../assets/Icons/dashboard.png';
@@ -93,13 +94,113 @@ const Dashboard = () => {
         return `${Math.floor(diff / 86400)}d ago`;
     };
 
-    // Mock data for Itinerary History
-    const itineraryHistory = [
-        { id: 1, title: "Tokyo: Tech & Anime Odyssey", type: "Culture", budget: "$1500", img: "🗼", date: "Feb 12, 2026" },
-        { id: 2, title: "Paris: Hidden Art & History", type: "Heritage", budget: "$800", img: "🎨", date: "Jan 28, 2026" },
-        { id: 3, title: "Mumbai: The Spice Route", type: "Foodie", budget: "$500", img: "🥘", date: "Jan 15, 2026" },
-        { id: 4, title: "Berlin: Cold War & Techno", type: "Music", budget: "$1200", img: "🎧", date: "Dec 20, 2025" },
-    ];
+    // Real itinerary history from backend
+    const [itineraryHistory, setItineraryHistory] = useState([]);
+    const [itineraryLoading, setItineraryLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchItineraries = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+                const res = await axios.get('/api/itinerary', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.data.success) setItineraryHistory(res.data.itineraries);
+            } catch (err) {
+                console.error('Failed to fetch itineraries:', err.message);
+            } finally {
+                setItineraryLoading(false);
+            }
+        };
+        fetchItineraries();
+    }, []);
+
+    const downloadItineraryPDF = (plan) => {
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pageW = doc.internal.pageSize.getWidth();
+        const margin = 18;
+        const maxW = pageW - margin * 2;
+        let y = 20;
+
+        doc.setFillColor(82, 39, 255);
+        doc.rect(0, 0, pageW, 14, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.text('TRAVELAI  ·  YOUR PERSONAL ITINERARY', margin, 9);
+
+        y = 28;
+        doc.setTextColor(20, 20, 40);
+        doc.setFontSize(22);
+        doc.text(plan.tripName || 'My Trip', margin, y);
+
+        y += 10;
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 100, 120);
+        doc.text(`Duration: ${plan.duration}   ·   Budget: ${plan.budget}`, margin, y);
+
+        y += 6;
+        doc.setDrawColor(220, 218, 255);
+        doc.line(margin, y, pageW - margin, y);
+
+        y += 10;
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(82, 39, 255);
+        doc.text('Day-by-Day Plan', margin, y);
+
+        (plan.dailyPlan || []).forEach((day, i) => {
+            y += 10;
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.setFillColor(240, 238, 255);
+            doc.roundedRect(margin, y - 5, 28, 8, 2, 2, 'F');
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(82, 39, 255);
+            doc.text(`Day ${i + 1}`, margin + 4, y);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(20, 20, 40);
+            const actLines = doc.splitTextToSize(day.activity || '', maxW - 32);
+            doc.text(actLines, margin + 32, y);
+            y += actLines.length * 5;
+            if (day.food) {
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(100, 100, 120);
+                const fLines = doc.splitTextToSize(`Food: ${day.food}`, maxW - 32);
+                doc.text(fLines, margin + 32, y);
+                y += fLines.length * 4.5;
+            }
+        });
+
+        if (plan.tips && plan.tips.length > 0) {
+            y += 10;
+            if (y > 260) { doc.addPage(); y = 20; }
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(82, 39, 255);
+            doc.text('Travel Tips', margin, y);
+            plan.tips.forEach(tip => {
+                y += 8;
+                if (y > 275) { doc.addPage(); y = 20; }
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(40, 40, 60);
+                const tLines = doc.splitTextToSize(`✦  ${tip}`, maxW);
+                doc.text(tLines, margin, y);
+                y += (tLines.length - 1) * 5;
+            });
+        }
+
+        const footerY = doc.internal.pageSize.getHeight() - 10;
+        doc.setFontSize(7);
+        doc.setTextColor(180, 180, 200);
+        doc.text(`Generated by TravelAI  ·  ${new Date().toLocaleDateString()}`, margin, footerY);
+        doc.save(`${(plan.tripName || 'itinerary').replace(/\s+/g, '_')}.pdf`);
+    };
 
     const fileInputRef = useRef(null);
 
@@ -137,6 +238,11 @@ const Dashboard = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('loggedInUser');
+        // Notify Navbar in the same tab so it switches to Login/Sign up immediately
+        window.dispatchEvent(new Event('authChange'));
         setIsLoggingOut(true);
         setTimeout(() => {
             navigate('/');
@@ -234,28 +340,35 @@ const Dashboard = () => {
                                 </div>
                                 <div className="header-filters">
                                     <span className="filter-item active">Archive</span>
-                                    <span className="filter-item">Shared</span>
                                 </div>
                             </div>
 
                             <div className="history-grid">
-                                {itineraryHistory.map(plan => (
-                                    <div key={plan.id} className="history-card">
-                                        <div className="history-card-header">
-                                            <div>
-                                                <p className="history-date">{plan.date}</p>
-                                                <h4 className="history-title">{plan.title}</h4>
+                                {itineraryLoading ? (
+                                    <p style={{ color: '#555', fontSize: '0.9rem', padding: '12px 0', gridColumn: '1/-1' }}>Loading itineraries…</p>
+                                ) : itineraryHistory.length === 0 ? (
+                                    <p style={{ color: '#555', fontSize: '0.9rem', padding: '12px 0', gridColumn: '1/-1' }}>
+                                        No saved itineraries yet. <span style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => navigate('/ai')}>Generate one with AI →</span>
+                                    </p>
+                                ) : (
+                                    itineraryHistory.map(plan => (
+                                        <div key={plan._id} className="history-card">
+                                            <div className="history-card-header">
+                                                <div>
+                                                    <p className="history-date">{new Date(plan.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                                    <h4 className="history-title">{plan.tripName}</h4>
+                                                </div>
+                                                <div className="budget-tag">{plan.budget || '—'}</div>
                                             </div>
-                                            <div className="budget-tag">{plan.budget}</div>
-                                        </div>
-                                        <div className="history-image-placeholder">
-                                            {plan.img}
-                                            <div className="overlay-btn-container">
-                                                <button className="view-details-btn">View Details</button>
+                                            <div className="history-image-placeholder">
+                                                🗺️
+                                                <div className="overlay-btn-container">
+                                                    <button className="view-details-btn" onClick={() => downloadItineraryPDF(plan)}>⬇ Download PDF</button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))
+                                )}
                             </div>
                         </section>
                     </div>
@@ -297,7 +410,7 @@ const Dashboard = () => {
                             </div>
                             <div className="stats-list">
                                 {[
-                                    { label: 'Itineraries Saved', val: itineraryHistory.length },
+                                    { label: 'Itineraries Saved', val: itineraryLoading ? '…' : itineraryHistory.length },
                                     { label: 'Community Posts', val: myRecentPosts.length },
                                     { label: 'Network Connections', val: '124' },
                                 ].map(s => (
