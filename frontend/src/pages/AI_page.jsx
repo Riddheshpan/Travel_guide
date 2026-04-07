@@ -65,7 +65,7 @@ const TravelAIPage = () => {
             const headers = { 'Content-Type': 'application/json' };
             if (token) headers['Authorization'] = `Bearer ${token}`;
 
-            const response = await fetch('http://localhost:8080/api/ai/generate', {
+            const response = await fetch('/api/ai/generate', {
                 method: 'POST',
                 headers,
                 body: JSON.stringify(formData)

@@ -28,6 +28,10 @@ app.get('/ping', (req, res) => {
     res.send("Pong");
 });
 
-app.listen(PORT, () => {
-    console.log(`Server listening at ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server listening at ${PORT}`);
+    });
+}
+
+module.exports = app;
