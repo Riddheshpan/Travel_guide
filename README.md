@@ -144,5 +144,13 @@ The codebase comes preconfigured with a `vercel.json` file designed to assist wi
 
 > **Note:** Whenever you use serverless environments (like Vercel) you must configure the IP Whitelist in your MongoDB Atlas Dashboard. In Atlas, under Network Access, set it to **Allow Access From Anywhere (`0.0.0.0/0`)** since Serverless Functions rotate IP addresses dynamically.
 
+## Screenshot
+
+<img width="1907" height="872" alt="Screenshot 2026-04-08 095353" src="https://github.com/user-attachments/assets/120b0608-d314-4c07-8174-338847ab22dc" />
+<img width="1906" height="881" alt="Screenshot 2026-04-08 095332" src="https://github.com/user-attachments/assets/1601a0db-86db-4776-8ca7-0173b9d3f400" />
+<img width="1909" height="882" alt="Screenshot 2026-04-08 095314" src="https://github.com/user-attachments/assets/4034b81b-58a9-4a46-8cc3-2e5e21eafbb2" />
+<img width="1905" height="874" alt="Screenshot 2026-04-08 095246" src="https://github.com/user-attachments/assets/0ec2e950-19c1-4074-a719-50b8d24a7ee7" />
+<img width="1886" height="872" alt="Screenshot 2026-04-08 095206" src="https://github.com/user-attachments/assets/3895fad7-fd4f-4a8a-af49-3228890775d8" />
+
 ---
 Happy Coding and Travelling! 🌍✈️
