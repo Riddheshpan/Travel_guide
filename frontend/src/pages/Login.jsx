@@ -7,8 +7,32 @@ import DotGrid from './Style/dot';
 
 function LoginSignup() {
     const [isSignUpMode, setIsSignUpMode] = useState(false);
+    const [verifyMode, setVerifyMode] = useState(false);
+    const [emailToVerify, setEmailToVerify] = useState('');
+    const [verifyOtp, setVerifyOtp] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
+
+    const handleVerify = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch("/auth/verify-account", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: emailToVerify, otp: verifyOtp })
+            });
+            const result = await response.json();
+            if (result.success) {
+                handleSuccess(result.message);
+                setVerifyMode(false);
+                setIsSignUpMode(false);
+            } else {
+                handleError(result.message);
+            }
+        } catch (err) {
+            handleError(err);
+        }
+    };
 
     useEffect(() => {
         if (location.pathname === '/signup') {
@@ -54,8 +78,9 @@ function LoginSignup() {
             const { success, message, error } = result;
             if (success) {
                 handleSuccess(message);
+                setEmailToVerify(signupInfo.email);
                 setTimeout(() => {
-                    handleModeSwitch('login');
+                    setVerifyMode(true);
                 }, 1000);
             } else if (error) {
                 const details = error?.details[0].message;
@@ -108,7 +133,13 @@ function LoginSignup() {
                 const details = error?.details[0].message;
                 handleError(details);
             } else if (!success) {
-                handleError(message);
+                if (result.requiresVerification) {
+                    setEmailToVerify(loginInfo.email);
+                    setVerifyMode(true);
+                    handleError(message);
+                } else {
+                    handleError(message);
+                }
             }
         } catch (err) {
             handleError(err);
@@ -151,7 +182,7 @@ function LoginSignup() {
                         <span>or use your account</span>
                         <input type="email" name="email" placeholder="Email" onChange={handleLoginChange} value={loginInfo.email} />
                         <input type="password" name="password" placeholder="Password" onChange={handleLoginChange} value={loginInfo.password} />
-                        <a href="#">Forgot your password?</a>
+                        <a href="#" onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}>Forgot your password?</a>
                         <button type="submit">Sign In</button>
                     </form>
                 </div>
@@ -173,6 +204,22 @@ function LoginSignup() {
                 </div>
                 <ToastContainer />
             </div>
+
+            {verifyMode && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '10px', width: '400px', textAlign: 'center' }}>
+                        <h2 style={{ color: '#333', marginBottom: '20px' }}>Verify Your Email</h2>
+                        <p style={{ color: '#666', marginBottom: '20px' }}>Please enter the 6-digit OTP sent to <br/><b>{emailToVerify}</b></p>
+                        <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 0 }}>
+                            <input type="text" placeholder="Enter OTP" value={verifyOtp} onChange={(e) => setVerifyOtp(e.target.value)} style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ccc', marginBottom: '20px', width: '100%', backgroundColor: '#eee', color: '#333' }} />
+                            <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+                                <button type="submit" style={{ flex: 1, padding: '12px', cursor: 'pointer', borderRadius: '5px', border: 'none', backgroundColor: '#5227ff', color: 'white' }}>Verify</button>
+                                <button type="button" onClick={() => setVerifyMode(false)} style={{ flex: 1, padding: '12px', cursor: 'pointer', borderRadius: '5px', border: '1px solid #5227ff', backgroundColor: 'white', color: '#5227ff' }}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

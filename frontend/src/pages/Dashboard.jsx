@@ -489,6 +489,9 @@ const Dashboard = () => {
                                 </div>
                             </div>
 
+                            <div className="modal-actions" style={{ justifyContent: 'center', marginBottom: '10px' }}>
+                                <button type="button" className="settings-btn" onClick={() => navigate('/forgot-password')} style={{ width: '100%', background: '#5227ff' }}>Change Password</button>
+                            </div>
                             <div className="modal-actions">
                                 <button className="modal-cancel-btn" onClick={() => setIsProfileModalOpen(false)}>Cancel</button>
                                 <button className="modal-save-btn" onClick={() => setIsProfileModalOpen(false)}>Save Changes</button>

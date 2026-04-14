@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import FrontPage from './pages/home'
 import LoginSignup from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
 import HomePage from './pages/HomePage'
 import Dashboard from './pages/Dashboard'
 import Chat from './pages/Chat'
@@ -19,7 +20,7 @@ function App() {
 
 const Layout = () => {
   const location = useLocation();
-  const hideNavbarPaths = ['/', '/chat', '/login', '/signup'];
+  const hideNavbarPaths = ['/', '/chat', '/login', '/signup', '/forgot-password'];
   const showNavbar = !hideNavbarPaths.includes(location.pathname);
   const isLoggedIn = !!localStorage.getItem('userId');
 
@@ -31,6 +32,7 @@ const Layout = () => {
         <Route path="/homePage" element={<HomePage />} />
         <Route path="/signup" element={isLoggedIn ? <Navigate to="/chat" replace /> : <LoginSignup />} />
         <Route path="/login" element={isLoggedIn ? <Navigate to="/chat" replace /> : <LoginSignup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/ai" element={<TravelAIPage />} />
