@@ -315,7 +315,7 @@ const Chat = () => {
                         <img src={globeIcon} alt="Explore" className="dock-icon-img" />
                         <span className="dock-label">Explore</span>
                     </button>
-                    <button className="dock-item" title="AI Assistant" onClick={() => navigate('/dashboard')}>
+                    <button className="dock-item" title="AI Assistant" onClick={() => navigate('/ai')}>
                         <img src={aiIcon} alt="AI" className="dock-icon-img" />
                         <span className="dock-label">AI</span>
                     </button>
