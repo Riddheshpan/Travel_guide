@@ -784,13 +784,13 @@ html:has(.ai-page-wrapper) body {
         font-size: 10.5px;
     }
 
-    .form-container,
+    .ai-form-container,
     .result-section {
         padding: 28px 20px;
         border-radius: 20px;
     }
 
-    .form-grid {
+    .ai-form-grid {
         grid-template-columns: 1fr;
         gap: 18px;
     }

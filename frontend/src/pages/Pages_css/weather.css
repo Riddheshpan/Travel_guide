@@ -264,3 +264,22 @@
         transform: rotate(360deg);
     }
 }
+
+@media (max-width: 768px) {
+    .weather-wrapper {
+        padding: 100px 20px 40px;
+    }
+    
+    .current-temp {
+        font-size: 80px;
+    }
+    
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .forecast-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}

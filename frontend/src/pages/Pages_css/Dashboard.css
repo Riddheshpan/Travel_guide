@@ -152,6 +152,20 @@
     }
 }
 
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .dashboard-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .header-left {
+        gap: 0.5rem;
+    }
+}
+
 .left-column {
     display: flex;
     flex-direction: column;

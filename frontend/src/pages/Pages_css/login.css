@@ -263,3 +263,56 @@ input::placeholder {
 .container.right-panel-active .overlay-right {
     transform: translateX(20%);
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .container {
+        min-height: 100vh;
+        border-radius: 0;
+    }
+    
+    .form-container {
+        width: 100%;
+        position: relative;
+        height: auto;
+    }
+    
+    .sign-in-container {
+        width: 100%;
+        opacity: 1;
+        z-index: 5;
+        padding-top: 20px;
+    }
+    
+    .sign-up-container {
+        width: 100%;
+        opacity: 1;
+        z-index: 5;
+        padding-bottom: 20px;
+        transform: none !important;
+        animation: none !important;
+    }
+    
+    .container.right-panel-active .sign-in-container,
+    .container.right-panel-active .sign-up-container {
+        transform: none;
+        opacity: 1;
+    }
+
+    form {
+        padding: 0 20px;
+    }
+    
+    /* Hide the fancy overlay animation on mobile to prefer stacked forms */
+    .overlay-container {
+        display: none;
+    }
+    
+    .mobile-separator {
+        width: 100%;
+        height: 1px;
+        background-color: #ddd;
+        margin: 20px 0;
+        display: block;
+    }
+}

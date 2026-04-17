@@ -400,15 +400,54 @@ body {
     }
 
     .navbar {
-        padding: 1rem 2rem;
+        padding: 1rem 1rem;
+    }
+    
+    .logo-container .logo {
+        height: 60px;
     }
 
     .nav-links {
-        display: none;
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #f3eded;
+        justify-content: space-around;
+        padding: 15px 0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        margin: 0;
+    }
+    
+    .nav-links li a {
+        font-size: 0.85rem;
+    }
+    
+    .services-section {
+        padding: 3rem 1.5rem;
+    }
+
+    .explore-section {
+        padding: 3rem 1.5rem;
     }
 
     .explore-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .explore-card, .explore-card-half-top, .explore-card-half-bottom {
+        height: 300px; /* Uniform height for all map cards on mobile */
+    }
+
+    .footer {
+        padding: 3rem 1.5rem;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 2rem;
     }
 
     .footer-links-container {
