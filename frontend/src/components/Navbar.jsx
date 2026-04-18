@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Navbar.css';
 import logo from '../assets/Logo.png';
 import accountIcon from '../assets/Icons/account.png';
@@ -27,13 +27,13 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="logo-container">
-                <a href="/">
+                <Link to="/">
                     <img src={logo} alt="Logo" className="logo" />
-                </a>
+                </Link>
             </div>
             <ul className="nav-links">
-                <li><a href="/ai">AI Bot</a></li>
-                <li><a href="/weather">Weather</a></li>
+                <li><Link to="/ai">AI Bot</Link></li>
+                <li><Link to="/weather">Weather</Link></li>
                 <li><button onClick={() => navigate('/chat')} className="nav-btn">Post</button></li>
                 <li><a href="/#about">About Us</a></li>
                 {isAuthenticated ? (
@@ -43,7 +43,7 @@ const Navbar = () => {
                         </button>
                     </li>
                 ) : (
-                    <li><a href="/login">Login/Sign up</a></li>
+                    <li><Link to="/login">Login/Sign up</Link></li>
                 )}
             </ul>
         </nav>
